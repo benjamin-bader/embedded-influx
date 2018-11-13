@@ -23,6 +23,15 @@ import java.util.function.Supplier
 import kotlin.concurrent.thread
 import kotlin.concurrent.withLock
 
+/**
+ * An object that can host an instance of InfluxDB.
+ *
+ * Without any custom configuration, [InfluxServer] will start InfluxDB with
+ * the default HTTP port of 8086, using the database's default configuration.
+ *
+ * At present, an affordance is made in the API for customizing the listening
+ * port, but it has no effect.  This situation is expected to change soon.
+ */
 class InfluxServer internal constructor(builder: InfluxServerBuilder): Closeable {
 
     companion object {
@@ -43,6 +52,8 @@ class InfluxServer internal constructor(builder: InfluxServerBuilder): Closeable
     private var started = false
 
     constructor(port: Int) : this(builder().port(port))
+
+    constructor() : this(builder())
 
     fun start() {
         lock.withLock {
