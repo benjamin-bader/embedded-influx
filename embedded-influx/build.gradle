@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    id 'java-library'
-    id 'org.jetbrains.kotlin.jvm'
-    id 'org.jetbrains.dokka' version '0.9.17'
-}
-
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.influxdb:influxdb-java:2.14'
+    api libs.kotlin
+    testImplementation libs.junit4
+    testImplementation libs.influxClient
 }
 
 compileKotlin {

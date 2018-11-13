@@ -13,16 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.0'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${KOTLIN_VERSION}"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.17"
+    }
 }
 
 allprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin: 'org.jetbrains.dokka'
+
     group POM_GROUP
     version POM_VERSION
-
-    ext.kotlin_version = '1.3.0' // Keep this in sync
 
     sourceCompatibility = 1.8
 
@@ -32,5 +42,13 @@ allprojects {
 }
 
 subprojects {
+    project.ext {
+        libs = [
+                influxClient: [ "org.influxdb:influxdb-java:2.14" ],
+                kotlin: [ "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$KOTLIN_VERSION" ],
+                junit4: [ "junit:junit:4.12" ],
+        ]
+    }
+
     apply from: "$rootDir/gradle/gradle-mvn-publish.gradle"
 }
