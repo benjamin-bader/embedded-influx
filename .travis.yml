@@ -1,0 +1,22 @@
+os:
+  - linux
+  - osx
+
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+
+language: java
+jdk: openjdk8
+
+install: echo "Nothing to do"
+
+script: ./gradlew check
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
+  - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
+
