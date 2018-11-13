@@ -1,6 +1,8 @@
 # embedded-influx
 ### Embedded InfluxDB Server for Tests
 
+[![Build Status](https://travis-ci.org/benjamin-bader/embedded-influx.svg?branch=master)](https://travis-ci.org/benjamin-bader/embedded-influx)
+
 Use like so:
 
 ```kotlin
