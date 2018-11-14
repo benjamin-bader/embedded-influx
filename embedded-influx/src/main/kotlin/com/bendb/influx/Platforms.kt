@@ -15,15 +15,18 @@
  */
 package com.bendb.influx
 
-internal enum class OperatingSystem {
-    WINDOWS,
-    MACOS,
-    LINUX,
+internal enum class OperatingSystem(val value: String) {
+    WINDOWS("win"),
+    MACOS("mac"),
+    LINUX("linux");
+
+    val fileExtension: String
+        get() = if (this == WINDOWS) ".exe" else ""
 }
 
-internal enum class Architecture {
-    X86,
-    X64
+internal enum class Architecture(val value: String) {
+    X86("x86"),
+    X64("x64")
 }
 
 internal data class Platform(val os: OperatingSystem, val arch: Architecture)

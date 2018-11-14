@@ -50,10 +50,19 @@ allprojects {
 
 subprojects {
     project.ext {
+        junit4Version = '4.12'
+        junit5Version = '5.3.1'
+
         libs = [
                 influxClient: [ "org.influxdb:influxdb-java:2.14" ],
                 kotlin: [ "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$KOTLIN_VERSION" ],
-                junit4: [ "junit:junit:4.12" ],
+                junit4: [ "junit:junit:$junit4Version" ],
+                junit5: [
+                        "org.junit:junit-bom:$junit5Version"
+                ],
+                junit5Api: [
+                        "org.junit.jupiter:junit-jupiter-api:$junit5Version"
+                ]
         ]
     }
 

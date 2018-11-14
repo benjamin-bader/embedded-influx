@@ -34,25 +34,11 @@ internal object BinaryProvider : Supplier<File> {
 
 private val Platform.isSupported: Boolean
     get() {
-        return when {
-            os == OperatingSystem.WINDOWS && arch == Architecture.X64 -> true
-            os == OperatingSystem.MACOS && arch == Architecture.X64 -> true
-            os == OperatingSystem.LINUX -> true
-            else -> false
-        }
+        return arch == Architecture.X64
     }
 
 private val Platform.binaryName: String
-    get() = when {
-        os == OperatingSystem.WINDOWS -> pathFromComponents("win", "x64", "influxd.exe")
-        os == OperatingSystem.MACOS -> pathFromComponents("mac", "x64", "influxd")
-        os == OperatingSystem.LINUX && arch == Architecture.X64 ->
-            pathFromComponents("linux", "x64", "influxd")
-        os == OperatingSystem.LINUX && arch == Architecture.X86 ->
-            pathFromComponents("linux", "x86", "influxd")
-
-        else -> error("Unexpected platform: $this")
-    }
+    get() = pathFromComponents(os.value, arch.value, "influxd${os.fileExtension}")
 
 internal fun copyExecutableResource(filename: String): File {
     val tempDir = createTempDir().apply { deleteOnExit() }

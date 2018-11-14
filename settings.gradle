@@ -1,3 +1,4 @@
 rootProject.name = 'embedded-influx-parent'
 include ':embedded-influx'
 include ':embedded-influx-junit4'
+include ':embedded-influx-junit5'
