@@ -15,17 +15,18 @@
  */
 package com.bendb.influx
 
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
+import io.kotlintest.matchers.file.beExecutable
+import io.kotlintest.matchers.file.exist
+import io.kotlintest.should
 import org.junit.Test
 
 class BinaryProviderTest {
     @Test fun `looking up the executable file returns an existing file that is executable`() {
         val exe = BinaryProvider.get()
-        assertThat(exe.exists(), `is`(true))
+        exe should exist()
     }
 
     @Test fun `provided file is executable`() {
-        assertThat(BinaryProvider.get().canExecute(), `is`(true))
+        BinaryProvider.get() should beExecutable()
     }
 }

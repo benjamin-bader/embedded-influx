@@ -18,6 +18,7 @@ description "InfluxDB embedded server for unit tests"
 
 dependencies {
     api libs.kotlin
-    testImplementation libs.junit4
     testImplementation libs.influxClient
+    testImplementation libs.junit4
+    testImplementation libs.kotlinTest
 }

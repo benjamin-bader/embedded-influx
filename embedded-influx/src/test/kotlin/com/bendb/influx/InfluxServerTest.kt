@@ -15,36 +15,27 @@
  */
 package com.bendb.influx
 
-import org.hamcrest.CoreMatchers
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.notNullValue
+import io.kotlintest.matchers.types.shouldBeSameInstanceAs
+import io.kotlintest.shouldBe
 import org.influxdb.InfluxDBFactory
-import org.junit.Assert.assertThat
 import org.junit.Test
-import java.io.File
-import java.util.function.Supplier
 
 class InfluxServerTest {
     @Test fun `builder default port is 8086`() {
-        assertThat(InfluxServerBuilder().port, CoreMatchers.equalTo(8086))
+        InfluxServerBuilder().port shouldBe 8086
     }
 
     @Test fun `builder binary supplier is BinaryProvider by default`() {
-        assertThat(InfluxServerBuilder().executableSupplier, CoreMatchers.sameInstance<Supplier<File>>(BinaryProvider))
+        InfluxServerBuilder().executableSupplier.shouldBeSameInstanceAs(BinaryProvider)
     }
 
     @Test fun `start starts an InfluxDB server`() {
-        val server = InfluxServer(8086).apply {
-            start()
-        }
+        InfluxServer(8086).use { server ->
+            server.start()
 
-        try {
-            val client = InfluxDBFactory.connect("http://127.0.0.1:8086")
-            assertThat(client.ping(), `is`(notNullValue()))
-            client.close()
-        } finally {
-            server.close()
+            InfluxDBFactory.connect("http://127.0.0.1:8086").use { client ->
+                client.ping()?.isGood shouldBe true
+            }
         }
-
     }
 }

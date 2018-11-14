@@ -20,28 +20,26 @@ import java.io.InputStream
 import java.util.function.Supplier
 
 internal object BinaryProvider : Supplier<File> {
-    private val exe: File by lazy {
+    override fun get(): File {
         val platform = detectPlatform()
         if (!platform.isSupported) {
             error("No Influx binary found for the current platform: $platform")
         }
 
-        copyExecutableResource(platform.binaryName)
+        return copyExecutableResource(platform.binaryName)
     }
-
-    override fun get(): File = exe
 }
 
-private val Platform.isSupported: Boolean
+internal val Platform.isSupported: Boolean
     get() {
         return arch == Architecture.X64
     }
 
-private val Platform.binaryName: String
+internal val Platform.binaryName: String
     get() = pathFromComponents(os.value, arch.value, "influxd${os.fileExtension}")
 
 internal fun copyExecutableResource(filename: String): File {
-    val tempDir = createTempDir().apply { deleteOnExit() }
+    val tempDir = createTempDir(prefix = "embedded_influx").apply { deleteOnExit() }
     val exe = File(tempDir, filename).apply {
         deleteOnExit()
         parentFile.mkdirs()

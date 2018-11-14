@@ -1,10 +1,10 @@
 package com.bendb.influx
 
+import io.kotlintest.matchers.types.shouldBeSameInstanceAs
+import io.kotlintest.shouldBe
 import org.influxdb.InfluxDBFactory
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.jupiter.api.function.Executable
 
 @ExtendWith(InfluxServerExtension::class)
 class InfluxServerExtensionTest {
@@ -14,15 +14,11 @@ class InfluxServerExtensionTest {
     @Test fun serverIsInjectedAndRunning() {
         InfluxDBFactory.connect(server.url).use { client ->
             val pong = client.ping()
-            Assertions.assertAll(
-                Executable { Assertions.assertNotNull(pong) },
-                Executable { Assertions.assertTrue(pong.isGood) }
-            )
-            Assertions.assertNotNull(client.ping())
+            pong?.isGood shouldBe true
         }
     }
 
     @Test fun onlyOneServerInstanceIsInjected() {
-        Assertions.assertSame(server, otherServer)
+        server.shouldBeSameInstanceAs(otherServer)
     }
 }

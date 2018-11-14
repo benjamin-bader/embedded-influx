@@ -19,4 +19,6 @@ description "JUnit 4 support for embedded InfluxDB"
 dependencies {
     api project(":embedded-influx")
     api libs.junit4
+    testImplementation libs.influxClient
+    testImplementation libs.kotlinTest
 }

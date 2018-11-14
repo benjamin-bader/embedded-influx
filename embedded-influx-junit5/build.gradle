@@ -20,6 +20,7 @@ dependencies {
     api project(":embedded-influx")
     api libs.junit5Api
 
-    testImplementation libs.junit5
     testImplementation libs.influxClient
+    testImplementation libs.junit5
+    testImplementation libs.kotlinTest
 }
