@@ -16,16 +16,29 @@
 package com.bendb.influx
 
 import io.kotlintest.shouldBe
+import io.kotlintest.shouldNotBe
 import org.influxdb.InfluxDBFactory
 import org.junit.Rule
 import org.junit.Test
 
-class InfluxServerRuleTest {
-    @get:Rule val serverRule = InfluxServerRule()
+class MultipleServerRulesTest {
+    @get:Rule val serverOne = InfluxServerRule()
+    @get:Rule val serverTwo = InfluxServerRule()
 
-    @Test fun `rule starts an influx server`() {
-        InfluxDBFactory.connect(serverRule.url).use { client ->
-            client.ping()?.isGood shouldBe true
+    @Test
+    fun `multiple rules will start up distinct servers`() {
+        serverOne.url shouldNotBe serverTwo.url
+
+        InfluxDBFactory.connect(serverOne.url).use { client ->
+            val pong = client.ping()
+            pong.version shouldBe "1.7.0"
+            pong.isGood shouldBe true
+        }
+
+        InfluxDBFactory.connect(serverTwo.url).use { client ->
+            val pong = client.ping()
+            pong.version shouldBe "1.7.0"
+            pong.isGood shouldBe true
         }
     }
 }
