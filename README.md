@@ -3,6 +3,8 @@
 
 [![Build Status](https://travis-ci.org/benjamin-bader/embedded-influx.svg?branch=master)](https://travis-ci.org/benjamin-bader/embedded-influx)
 
+The currently bundled version of influxd is 1.7.0. 
+
 Use like so:
 
 ```kotlin

@@ -39,9 +39,9 @@ internal val Platform.binaryName: String
     get() = pathFromComponents(os.value, arch.value, "influxd${os.fileExtension}")
 
 internal fun copyExecutableResource(filename: String): File {
-    val tempDir = createTempDir(prefix = "embedded_influx").apply { deleteOnExit() }
+    val tempDir = createTempDir(prefix = "embedded_influx").also { ShutdownHooks.deleteRecursively(it) }
+
     val exe = File(tempDir, filename).apply {
-        deleteOnExit()
         parentFile.mkdirs()
     }
 
