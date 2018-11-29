@@ -58,9 +58,9 @@ internal fun copyExecutableResource(filename: String): File {
 }
 
 private fun loadResourceAsStream(resourceName: String): InputStream {
-    return BinaryProvider.javaClass.classLoader.getResourceAsStream(resourceName) ?: error {
+    return BinaryProvider.javaClass.classLoader.getResourceAsStream(resourceName) ?: error(
         "Failed to load expected JAR resource '$resourceName'"
-    }
+    )
 }
 
 private fun pathFromComponents(vararg components: String): String {
