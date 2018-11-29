@@ -85,11 +85,11 @@ class InfluxServer internal constructor(builder: InfluxServerBuilder): Closeable
                 bind-address = "127.0.0.1:$backupPort"
 
                 [meta]
-                dir = "$metaDir"
+                dir = "${metaDir.escaped}"
 
                 [data]
-                dir = "$dataDir"
-                wal-dir = "$walDir"
+                dir = "${dataDir.escaped}"
+                wal-dir = "${walDir.escaped}"
 
                 [http]
                 bind-address = ":$httpPort"
@@ -171,6 +171,12 @@ class InfluxServer internal constructor(builder: InfluxServerBuilder): Closeable
             it.localPort
         }
     }
+
+    private val File.escaped: String
+        get() = absolutePath.escaped
+
+    private val String.escaped: String
+        get() = replace("\\", "\\\\")
 }
 
 class InfluxServerBuilder {
