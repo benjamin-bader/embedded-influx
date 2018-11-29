@@ -48,8 +48,8 @@ class InfluxServerTest {
             server.start()
 
             InfluxDBFactory.connect(server.url).use { client ->
-                client.createDatabase("sample")
-                client.createRetentionPolicy("default", "sample", "30d", 1, true)
+                client.query(Query("CREATE DATABASE sample WITH DURATION 1d REPLICATION 1", "sample"))
+                client.query(Query("CREATE RETENTION POLICY \"default\" ON sample DURATION 30d REPLICATION 1", "sample"))
 
                 val point = Point.measurement("memory")
                     .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)

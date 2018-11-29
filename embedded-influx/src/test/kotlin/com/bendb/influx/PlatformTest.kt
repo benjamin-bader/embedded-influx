@@ -15,10 +15,13 @@
  */
 package com.bendb.influx
 
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
 import io.kotlintest.fail
 import io.kotlintest.matchers.endWith
 import io.kotlintest.matchers.startWith
 import io.kotlintest.should
+import io.kotlintest.shouldBe
 import org.junit.Test
 
 class PlatformTest {
@@ -44,6 +47,34 @@ class PlatformTest {
 
     @Test fun linuxBinaryNameStartsWithLinux() {
         Platform(OperatingSystem.LINUX, Architecture.X64).binaryName should startWith("linux")
+    }
+
+    @Test fun detectsWindowsTenX64() {
+        val env = mock<SystemEnvironment> {
+            on(it.getProperty("os.name")) doReturn "Windows 10"
+            on(it.getEnvVar("PROCESSOR_ARCHITECTURE")) doReturn "AMD64"
+        }
+        detectPlatform(env).os shouldBe OperatingSystem.WINDOWS
+        detectPlatform(env).arch shouldBe Architecture.X64
+    }
+
+    @Test fun detectsWindowsTenX86() {
+        val env = mock<SystemEnvironment> {
+            on(it.getProperty("os.name")) doReturn "Windows 10"
+            on(it.getEnvVar("PROCESSOR_ARCHITECTURE")) doReturn "X86"
+        }
+        detectPlatform(env).os shouldBe OperatingSystem.WINDOWS
+        detectPlatform(env).arch shouldBe Architecture.X86
+    }
+
+    @Test fun detectsWowCompatibility() {
+        val env = mock<SystemEnvironment> {
+            on(it.getProperty("os.name")) doReturn "Windows 10"
+            on(it.getEnvVar("PROCESSOR_ARCHITECTURE")) doReturn "X86"
+            on(it.getEnvVar("PROCESSOR_ARCHITEW6432")) doReturn "IA64"
+        }
+        detectPlatform(env).os shouldBe OperatingSystem.WINDOWS
+        detectPlatform(env).arch shouldBe Architecture.X64
     }
 
     @Test fun `influx binaries are bundled for all supported platforms`() {

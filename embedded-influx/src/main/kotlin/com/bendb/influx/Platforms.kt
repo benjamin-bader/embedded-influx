@@ -31,34 +31,49 @@ internal enum class Architecture(val value: String) {
 
 internal data class Platform(val os: OperatingSystem, val arch: Architecture)
 
-internal fun detectPlatform(): Platform {
-    val os = getOs()
-    val arch = getArchitecture(os)
+internal fun detectPlatform(env: SystemEnvironment = DefaultSystemEnvironment): Platform {
+    val os = getOs(env)
+    val arch = getArchitecture(env, os)
     return Platform(os, arch)
 }
 
-private fun getOs(): OperatingSystem {
-    val osName = System.getProperty("os.name")
+internal interface SystemEnvironment {
+    fun getProperty(property: String): String?
+    fun getEnvVar(name: String): String?
+}
+
+internal object DefaultSystemEnvironment : SystemEnvironment {
+    override fun getProperty(property: String): String? {
+        return System.getProperty(property)
+    }
+
+    override fun getEnvVar(name: String): String? {
+        return System.getenv(name)
+    }
+}
+
+private fun getOs(env: SystemEnvironment): OperatingSystem {
+    val osName = env.getProperty("os.name")!!
 
     return when {
-        osName.contains("win") -> OperatingSystem.WINDOWS
+        osName.contains("win", ignoreCase = true) -> OperatingSystem.WINDOWS
         osName.equals("Mac OS X", ignoreCase = true) -> OperatingSystem.MACOS
         osName.contains(Regex("nix|nux|aix")) -> OperatingSystem.LINUX
         else -> error("Unsupported OS: $osName")
     }
 }
 
-private fun getArchitecture(os: OperatingSystem): Architecture {
+private fun getArchitecture(env: SystemEnvironment, os: OperatingSystem): Architecture {
     return when (os) {
-        OperatingSystem.WINDOWS -> getWindowsArchitecture()
+        OperatingSystem.WINDOWS -> getWindowsArchitecture(env)
         OperatingSystem.MACOS -> getMacosArchitecture()
         OperatingSystem.LINUX -> getNixArchitecture()
     }
 }
 
-private fun getWindowsArchitecture(): Architecture {
-    val processorArch = System.getenv("PROCESSOR_ARCHITECTURE")!!
-    val wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432")
+private fun getWindowsArchitecture(env: SystemEnvironment): Architecture {
+    val processorArch = env.getEnvVar("PROCESSOR_ARCHITECTURE") ?: ""
+    val wow64Arch = env.getEnvVar("PROCESSOR_ARCHITEW6432")
     return if (processorArch.endsWith("64") || wow64Arch != null && wow64Arch.endsWith("64")) {
         Architecture.X64
     } else {
