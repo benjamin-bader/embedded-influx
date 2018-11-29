@@ -58,11 +58,15 @@ internal fun copyExecutableResource(filename: String): File {
 }
 
 private fun loadResourceAsStream(resourceName: String): InputStream {
-    return BinaryProvider.javaClass.classLoader.getResourceAsStream(resourceName) ?: error(
+    val classLoader = Thread.currentThread().contextClassLoader
+        ?: BinaryProvider.javaClass.classLoader
+        ?: error("Both Thread.getContextClassLoader() and BinaryProvider.class.getClassLoader() are null")
+
+    return classLoader.getResourceAsStream(resourceName) ?: error(
         "Failed to load expected JAR resource '$resourceName'"
     )
 }
 
 private fun pathFromComponents(vararg components: String): String {
-    return components.joinToString(File.separator)
+    return components.joinToString("/")
 }
