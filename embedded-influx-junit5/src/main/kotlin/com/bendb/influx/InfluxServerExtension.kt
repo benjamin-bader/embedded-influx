@@ -21,6 +21,24 @@ import org.junit.jupiter.api.extension.Extension
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.TestInstancePostProcessor
 
+/**
+ * An extension that injects running instances of [InfluxServer] into fields
+ * of test classes.  After each test method, the server is discarded and
+ * re-initialized.
+ *
+ * ```
+ * @ExtendWith(InfluxServerExtension::class)
+ * class SomeTest {
+ *   private lateinit var server: InfluxServer
+ *
+ *   @Test fun testThatUsesInflux() {
+ *     InfluxDBFactory.connect(server.url) { client ->
+ *       client.ping().isGood shouldBe true
+ *     }
+ *   }
+ * }
+ * ```
+ */
 class InfluxServerExtension :
     Extension, TestInstancePostProcessor, BeforeEachCallback, AfterEachCallback {
 

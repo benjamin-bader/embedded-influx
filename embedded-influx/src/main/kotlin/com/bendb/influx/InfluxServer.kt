@@ -40,6 +40,9 @@ class InfluxServer internal constructor(builder: InfluxServerBuilder): Closeable
     companion object {
         const val DEFAULT_TIMEOUT_MILLIS = 2000
 
+        /**
+         * Creates and returns an [InfluxServerBuilder].
+         */
         @JvmStatic fun builder(): InfluxServerBuilder = InfluxServerBuilder()
     }
 
@@ -48,18 +51,32 @@ class InfluxServer internal constructor(builder: InfluxServerBuilder): Closeable
     private var backupPort: Int = 0
     private var httpPort: Int = builder.port
 
-    val url: String
-        get() = "http://127.0.0.1:$httpPort"
-
     private val lock = ReentrantLock()
     private val serverActiveCondition = lock.newCondition()
     private var process: Process? = null
     private var started = false
 
+    /**
+     * The URL at which the server will listen for HTTP queries.
+     */
+    val url: String
+        get() = "http://127.0.0.1:$httpPort"
+
+    /**
+     * Creates a new instance of [InfluxServer], which when started will listen
+     * for HTTP queries on the given [port].
+     */
     constructor(port: Int) : this(builder().port(port))
 
+    /**
+     * Creates a new instance of [InfluxServer], using any available port.
+     */
     constructor() : this(builder())
 
+    /**
+     * Starts the Influx server instance, and waits for it to become
+     * responsive.
+     */
     fun start() {
         lock.withLock {
             if (process != null) {
@@ -136,6 +153,9 @@ class InfluxServer internal constructor(builder: InfluxServerBuilder): Closeable
         }
     }
 
+    /**
+     * Shuts down the server process, if it is active.
+     */
     override fun close() {
         val process = lock.withLock {
             started = false
