@@ -17,9 +17,9 @@ package com.bendb.influx
 
 import java.io.Closeable
 import java.io.File
-import java.lang.Exception
 import java.net.ServerSocket
 import java.nio.file.Files
+import java.time.Duration
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import java.util.function.Supplier
@@ -38,8 +38,6 @@ import kotlin.concurrent.withLock
 class InfluxServer internal constructor(builder: InfluxServerBuilder): Closeable {
 
     companion object {
-        const val DEFAULT_TIMEOUT_MILLIS = 2000
-
         /**
          * Creates and returns an [InfluxServerBuilder].
          */
@@ -47,6 +45,7 @@ class InfluxServer internal constructor(builder: InfluxServerBuilder): Closeable
     }
 
     private val exe = builder.executableSupplier.get()
+    private val timeout = builder.timeout
 
     private var backupPort: Int = 0
     private var httpPort: Int = builder.port
@@ -120,7 +119,7 @@ class InfluxServer internal constructor(builder: InfluxServerBuilder): Closeable
 
             thread { awaitServerActive(proc) }
 
-            val deadline = System.currentTimeMillis() + DEFAULT_TIMEOUT_MILLIS
+            val deadline = System.currentTimeMillis() + timeout.toMillis()
 
             while (!started) {
                 val toWait = deadline - System.currentTimeMillis()
@@ -203,9 +202,11 @@ class InfluxServerBuilder {
 
     internal var port: Int = 0
     internal var executableSupplier: Supplier<File> = BinaryProvider
+    internal var timeout: Duration = Duration.ofSeconds(2)
 
     fun port(port: Int) = apply { this.port = port}
     fun executableSupplier(supplier: Supplier<File>) = apply { this.executableSupplier = supplier }
+    fun timeout(timeout: Duration) = apply { this.timeout = timeout }
 
     fun build(): InfluxServer {
         return InfluxServer(this)

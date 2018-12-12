@@ -16,6 +16,7 @@
 package com.bendb.influx
 
 import org.junit.rules.ExternalResource
+import java.time.Duration
 
 /**
  * A JUnit 4 `@Rule` that creates and starts an [InfluxServer] before and
@@ -57,6 +58,10 @@ class InfluxServerRule internal constructor(builder: Builder) : ExternalResource
 
         fun port(port: Int) = apply {
             serverBuilder = serverBuilder.port(port)
+        }
+
+        fun timeout(timeout: Duration) = apply {
+            serverBuilder = serverBuilder.timeout(timeout)
         }
 
         fun build(): InfluxServerRule {
