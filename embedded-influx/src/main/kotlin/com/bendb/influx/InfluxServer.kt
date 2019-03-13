@@ -121,7 +121,11 @@ class InfluxServer internal constructor(builder: InfluxServerBuilder): Closeable
 
             val deadline = System.currentTimeMillis() + timeout.toMillis()
 
-            while (!started) {
+            while (true) {
+                val finished = lock.withLock { started }
+                if (finished) {
+                    break
+                }
                 val toWait = deadline - System.currentTimeMillis()
                 if (toWait < 0) {
                     proc.destroy()
