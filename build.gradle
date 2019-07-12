@@ -62,7 +62,7 @@ subprojects {
                 ],
                 junit4: [ "junit:junit:$junit4Version" ],
                 junit5: [
-                        "org.junit:junit-bom:$junit5Version"
+                        "org.junit.jupiter:junit-jupiter-engine:$junit5Version"
                 ],
                 junit5Api: [
                         "org.junit.jupiter:junit-jupiter-api:$junit5Version"
