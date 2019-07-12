@@ -10,15 +10,15 @@ Add to your project like so:
 ```gradle
 dependencies {
   // If you just want to use InfluxServer manually:
-  testImplementation 'com.bendb.influx:embedded-influx:0.1.2'
+  testImplementation 'com.bendb.influx:embedded-influx:0.2.0'
 
   // Or...
   // If you want to use the JUnit 4 InfluxServerRule:
-  testImplementation 'com.bendb.influx:embedded-influx-junit4:0.1.2'
+  testImplementation 'com.bendb.influx:embedded-influx-junit4:0.2.0'
 
   // Or...
   // If you want a JUnit 5 Extension:
-  testImplementation 'com.bendb.influx:embedded-influx-junit5:0.1.2'
+  testImplementation 'com.bendb.influx:embedded-influx-junit5:0.2.0'
 }
 ```
 
